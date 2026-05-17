@@ -11,15 +11,18 @@ document
     e.preventDefault();
 
     const complaint = {
+
       id: Date.now(),
 
-      name: document.getElementById("name").value,
+      name:
+        document.getElementById("name").value,
 
-      usn: document
-        .getElementById("usn")
-        .value
-        .trim()
-        .toLowerCase(),
+      usn:
+        document
+          .getElementById("usn")
+          .value
+          .trim()
+          .toLowerCase(),
 
       department:
         document.getElementById("department").value,
@@ -60,7 +63,7 @@ document
 
       message.innerText = data.message;
 
-      message.style.color = "lime";
+      message.style.color = "green";
 
       document
         .getElementById("complaintForm")
@@ -79,7 +82,9 @@ document
 function loginAdmin() {
 
   const password =
-    document.getElementById("adminPassword").value;
+    document.getElementById(
+      "adminPassword"
+    ).value;
 
   if (password === "admin123") {
 
@@ -129,7 +134,9 @@ async function loadComplaints() {
     const complaints = await res.json();
 
     const complaintsList =
-      document.getElementById("complaintsList");
+      document.getElementById(
+        "complaintsList"
+      );
 
     complaintsList.innerHTML = "";
 
@@ -186,31 +193,49 @@ async function loadComplaints() {
 
           <textarea
             id="reply-${c.id}"
-            placeholder="Write reply..."
+            placeholder="Write admin reply..."
           >${c.adminReply === "No reply yet" ? "" : c.adminReply}</textarea>
 
           <select id="status-${c.id}">
+
             <option value="Pending"
-              ${c.status === "Pending" ? "selected" : ""}
+              ${c.status === "Pending"
+                ? "selected"
+                : ""}
             >
               Pending
             </option>
 
             <option value="In Progress"
-              ${c.status === "In Progress" ? "selected" : ""}
+              ${c.status === "In Progress"
+                ? "selected"
+                : ""}
             >
               In Progress
             </option>
 
             <option value="Resolved"
-              ${c.status === "Resolved" ? "selected" : ""}
+              ${c.status === "Resolved"
+                ? "selected"
+                : ""}
             >
               Resolved
             </option>
+
           </select>
 
           <button onclick="sendReply(${c.id})">
             Save Reply
+          </button>
+
+          <button
+            onclick="deleteComplaint(${c.id})"
+            style="
+              margin-top:10px;
+              background:#dc2626;
+            "
+          >
+            Delete Complaint
           </button>
 
         </div>
@@ -265,13 +290,47 @@ async function sendReply(id) {
         method: "PUT",
 
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type":
+            "application/json",
         },
 
         body: JSON.stringify({
           adminReply: finalReply,
           status: status,
         }),
+      }
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    loadComplaints();
+
+  } catch (err) {
+
+    console.log(err);
+  }
+}
+
+// =======================
+// DELETE COMPLAINT
+// =======================
+
+async function deleteComplaint(id) {
+
+  const confirmDelete = confirm(
+    "Are you sure you want to delete this complaint?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+
+    const res = await fetch(
+      `${API}/delete/${id}`,
+      {
+        method: "DELETE",
       }
     );
 
@@ -300,7 +359,9 @@ async function trackComplaint() {
     .toLowerCase();
 
   const result =
-    document.getElementById("trackResult");
+    document.getElementById(
+      "trackResult"
+    );
 
   result.innerHTML = "Loading...";
 
@@ -310,7 +371,8 @@ async function trackComplaint() {
       `${API}/track/${usn}`
     );
 
-    const complaints = await res.json();
+    const complaints =
+      await res.json();
 
     result.innerHTML = "";
 
