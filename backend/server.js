@@ -21,8 +21,21 @@ const KV_REST_API_TOKEN =
   "";
 const KV_COMPLAINTS_KEY = "complaints";
 const kvEnabled = Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
 
-app.use(cors());
+app.use(cors({
+  origin(origin, callback) {
+    try {
+      if (!origin) return callback(null, true);
+      if (FRONTEND_ORIGIN && origin === FRONTEND_ORIGIN) return callback(null, true);
+      if (/\.vercel\.app$/.test(new URL(origin).hostname)) return callback(null, true);
+      if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
+      return callback(null, false);
+    } catch (err) {
+      return callback(null, false);
+    }
+  }
+}));
 app.use(express.json());
 app.use(express.static(frontendDir));
 

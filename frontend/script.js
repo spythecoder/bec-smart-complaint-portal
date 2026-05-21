@@ -1,4 +1,10 @@
-const API = `${window.location.origin}/api`;
+const API_OVERRIDE_KEY = "bec_api_base";
+const queryApi = new URLSearchParams(window.location.search).get("api");
+if (queryApi) {
+  localStorage.setItem(API_OVERRIDE_KEY, queryApi.replace(/\/$/, ""));
+}
+const storedApi = localStorage.getItem(API_OVERRIDE_KEY);
+const API = (storedApi || `${window.location.origin}/api`).replace(/\/$/, "");
 const LOCAL_KEY = "bec_complaints_local";
 const LOCAL_ADMIN_PASSWORD = "admin123";
 
