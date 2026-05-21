@@ -1,4 +1,7 @@
-const API = "https://bec-smart-complaint-portal.onrender.com/api";
+const API_ENDPOINTS = [
+  "https://bec-smart-complaint-portal.onrender.com/api",
+  `${window.location.origin}/api`
+];
 const LOCAL_KEY = "bec_complaints_local";
 const LOCAL_ADMIN_PASSWORD = "admin123";
 
@@ -32,11 +35,31 @@ function setLocalComplaints(list) {
   localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
 }
 
-async function apiJson(url, options) {
-  const res = await fetch(url, options);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.message || "Request failed");
-  return data;
+async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function apiJson(path, options) {
+  let lastError = null;
+
+  for (const base of API_ENDPOINTS) {
+    try {
+      const res = await fetchWithTimeout(`${base}${path}`, options, 8000);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || "Request failed");
+      return data;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error("All API endpoints failed");
 }
 
 function renderComplaints(complaints) {
@@ -92,7 +115,7 @@ if (complaintForm) {
     const messageEl = document.getElementById("message");
 
     try {
-      const data = await apiJson(`${API}/submit-complaint`, {
+      const data = await apiJson(`/submit-complaint`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(complaint)
@@ -117,7 +140,7 @@ async function loginAdmin() {
   const password = passwordInput.value;
 
   try {
-    const data = await apiJson(`${API}/admin-login`, {
+    const data = await apiJson(`/admin-login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password })
@@ -145,7 +168,7 @@ async function loginAdmin() {
 async function loadComplaints() {
   setLayoutMode("admin");
   try {
-    const complaints = await apiJson(`${API}/complaints`);
+    const complaints = await apiJson(`/complaints`);
     renderComplaints(complaints);
   } catch (_) {
     renderComplaints(getLocalComplaints());
@@ -159,7 +182,7 @@ async function sendReply(id) {
   const status = document.getElementById(`status-${id}`).value;
 
   try {
-    const data = await apiJson(`${API}/reply/${id}`, {
+    const data = await apiJson(`/reply/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ adminReply, status })
@@ -183,7 +206,7 @@ async function deleteComplaint(id) {
   setLayoutMode("admin");
 
   try {
-    const data = await apiJson(`${API}/complaints/${id}`, { method: "DELETE" });
+    const data = await apiJson(`/complaints/${id}`, { method: "DELETE" });
     alert(data.message || "Deleted");
     loadComplaints();
   } catch (_) {
@@ -204,7 +227,7 @@ async function trackComplaint() {
 
   let complaints = [];
   try {
-    complaints = await apiJson(`${API}/track/${usn}`);
+    complaints = await apiJson(`/track/${usn}`);
   } catch (_) {
     complaints = getLocalComplaints().filter((c) => (c.usn || "").toLowerCase() === usn);
   }
