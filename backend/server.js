@@ -10,6 +10,7 @@ const IS_VERCEL = process.env.VERCEL === "1";
 
 const dataFile = path.join(__dirname, "complaints.json");
 const frontendDir = path.join(__dirname, "..", "frontend");
+
 const KV_REST_API_URL = process.env.KV_REST_API_URL || "";
 const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN || "";
 const KV_COMPLAINTS_KEY = "complaints";
@@ -23,7 +24,7 @@ async function readComplaints() {
   try {
     if (kvEnabled) {
       const res = await fetch(`${KV_REST_API_URL}/get/${KV_COMPLAINTS_KEY}`, {
-        headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` },
+        headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` }
       });
       if (!res.ok) throw new Error(`KV read failed: ${res.status}`);
       const data = await res.json();
@@ -47,13 +48,11 @@ async function writeComplaints(complaints) {
       method: "POST",
       headers: {
         Authorization: `Bearer ${KV_REST_API_TOKEN}`,
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ value: JSON.stringify(complaints) }),
+      body: JSON.stringify({ value: JSON.stringify(complaints) })
     });
-    if (!res.ok) {
-      throw new Error(`KV write failed: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`KV write failed: ${res.status}`);
     return;
   }
 
@@ -74,7 +73,7 @@ app.post("/api/submit-complaint", async (req, res) => {
     console.error(err);
     res.status(500).json({
       message: "Failed to submit complaint",
-      detail: IS_VERCEL && !kvEnabled ? "Configure Vercel KV for persistent storage." : undefined,
+      detail: IS_VERCEL && !kvEnabled ? "Configure Vercel KV for persistent storage." : undefined
     });
   }
 });
@@ -106,19 +105,18 @@ app.put("/api/reply/:id", async (req, res) => {
   const complaints = await readComplaints();
   const idx = complaints.findIndex((c) => Number(c.id) === id);
 
-  if (idx === -1) {
-    return res.status(404).json({ message: "Complaint not found" });
-  }
+  if (idx === -1) return res.status(404).json({ message: "Complaint not found" });
 
   complaints[idx].adminReply = adminReply || complaints[idx].adminReply;
   complaints[idx].status = status || complaints[idx].status;
+
   try {
     await writeComplaints(complaints);
   } catch (err) {
     console.error(err);
     return res.status(500).json({
       message: "Failed to update complaint",
-      detail: IS_VERCEL && !kvEnabled ? "Configure Vercel KV for persistent storage." : undefined,
+      detail: IS_VERCEL && !kvEnabled ? "Configure Vercel KV for persistent storage." : undefined
     });
   }
 
@@ -140,16 +138,17 @@ app.delete("/api/complaints/:id", async (req, res) => {
     console.error(err);
     return res.status(500).json({
       message: "Failed to delete complaint",
-      detail: IS_VERCEL && !kvEnabled ? "Configure Vercel KV for persistent storage." : undefined,
+      detail: IS_VERCEL && !kvEnabled ? "Configure Vercel KV for persistent storage." : undefined
     });
   }
+
   return res.json({ message: "Complaint deleted successfully" });
 });
 
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
-    storage: kvEnabled ? "vercel-kv" : IS_VERCEL ? "non-persistent" : "local-file",
+    storage: kvEnabled ? "vercel-kv" : IS_VERCEL ? "non-persistent" : "local-file"
   });
 });
 

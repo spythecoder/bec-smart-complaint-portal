@@ -1,178 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>BEC Smart Complaint Portal</title>
-
-    <link rel="stylesheet"
-        href="style.css">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BEC Smart Complaint Portal</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
+  <header class="header">
+    <h1>Basaveshwar Engineering College</h1>
+    <p>Smart Complaint Management Portal</p>
+  </header>
 
-    <!-- HEADER -->
+  <div class="main-container student-active">
+    <div class="student-panel">
+      <h2>Submit Complaint</h2>
+      <form id="complaintForm">
+        <input type="text" id="name" placeholder="Student Name" required />
+        <input type="text" id="usn" placeholder="USN" required />
 
-    <header class="header">
+        <select id="department" required>
+          <option value="">Select Department</option>
+          <option>CSE</option><option>ISE</option><option>ECE</option><option>EEE</option>
+          <option>Mechanical</option><option>Civil</option><option>MBA</option><option>MCA</option>
+        </select>
 
-        <h1>Basaveshwar Engineering College</h1>
+        <select id="category" required>
+          <option value="">Complaint Category</option>
+          <option>Academic Issues</option><option>Faculty Related</option><option>Hostel Complaints</option>
+          <option>Infrastructure Problems</option><option>Technical / WiFi Issues</option>
+          <option>Cleanliness & Maintenance</option><option>Bus Transportation</option>
+          <option>Cafeteria Issues</option><option>Examination Issues</option><option>Other</option>
+        </select>
 
-        <p>
-            Smart Complaint Management Portal
-        </p>
+        <input type="text" id="title" placeholder="Complaint Title" required />
+        <textarea id="description" placeholder="Describe your complaint..." required></textarea>
+        <button type="submit">Submit Complaint</button>
+      </form>
+      <p id="message"></p>
 
-    </header>
-
-    <!-- MAIN -->
-
-    <div class="main-container">
-
-        <!-- STUDENT PANEL -->
-
-        <div class="student-panel">
-
-            <h2>Submit Complaint</h2>
-
-            <form id="complaintForm">
-
-                <input type="text"
-                    id="name"
-                    placeholder="Student Name"
-                    required>
-
-                <input type="text"
-                    id="usn"
-                    placeholder="USN"
-                    required>
-
-                <select id="department"
-                    required>
-
-                    <option value="">
-                        Select Department
-                    </option>
-
-                    <option>CSE</option>
-                    <option>ISE</option>
-                    <option>ECE</option>
-                    <option>EEE</option>
-                    <option>Mechanical</option>
-                    <option>Civil</option>
-                    <option>MBA</option>
-                    <option>MCA</option>
-
-                </select>
-
-                <select id="category"
-                    required>
-
-                    <option value="">
-                        Complaint Category
-                    </option>
-
-                    <option>Academic Issues</option>
-                    <option>Faculty Related</option>
-                    <option>Hostel Complaints</option>
-                    <option>Infrastructure Problems</option>
-                    <option>Technical / WiFi Issues</option>
-                    <option>Cleanliness & Maintenance</option>
-                    <option>Bus Transportation</option>
-                    <option>Cafeteria Issues</option>
-                    <option>Examination Issues</option>
-                    <option>Other</option>
-
-                </select>
-
-                <input type="text"
-                    id="title"
-                    placeholder="Complaint Title"
-                    required>
-
-                <textarea id="description"
-                    placeholder="Describe your complaint..."
-                    required></textarea>
-
-                <button type="submit">
-                    Submit Complaint
-                </button>
-
-            </form>
-
-            <p id="message"></p>
-
-            <!-- TRACK -->
-
-            <div class="track-section">
-
-                <h2>Student Complaint Login</h2>
-
-                <input type="text"
-                    id="trackUsn"
-                    placeholder="Enter Your USN">
-
-                <button onclick="trackComplaint()">
-                    Login with USN
-                </button>
-
-                <div id="trackResult"></div>
-
-            </div>
-
-        </div>
-
-        <!-- ADMIN -->
-
-        <div class="admin-panel">
-
-            <h2>Admin Panel</h2>
-
-            <!-- LOGIN -->
-
-            <div id="loginSection">
-
-                <input type="password"
-                    id="adminPassword"
-                    placeholder="Enter Admin Password">
-
-                <button onclick="loginAdmin()">
-                    Login
-                </button>
-
-                <p id="loginMessage"></p>
-
-            </div>
-
-            <!-- DASHBOARD -->
-
-            <div id="adminDashboard"
-                style="display:none;">
-
-                <h3>All Complaints</h3>
-
-                <div id="complaintsList"></div>
-
-            </div>
-
-        </div>
-
+      <div class="track-section">
+        <h2>Student Complaint Login</h2>
+        <input type="text" id="trackUsn" placeholder="Enter Your USN" />
+        <button onclick="trackComplaint()">Login with USN</button>
+        <div id="trackResult"></div>
+      </div>
     </div>
 
-    <!-- FOOTER -->
+    <div class="admin-panel">
+      <h2>Admin Panel</h2>
+      <div id="loginSection">
+        <input type="password" id="adminPassword" placeholder="Enter Admin Password" />
+        <button onclick="loginAdmin()">Login</button>
+        <p id="loginMessage"></p>
+      </div>
 
-    <footer class="footer">
+      <div id="adminDashboard" style="display:none;">
+        <h3>All Complaints</h3>
+        <div id="complaintsList"></div>
+      </div>
+    </div>
+  </div>
 
-        © 2026 Basaveshwar Engineering College
-
-    </footer>
-
-    <script src="script.js"></script>
-
+  <footer class="footer">© 2026 Basaveshwar Engineering College</footer>
+  <script src="script.js"></script>
 </body>
-
 </html>
