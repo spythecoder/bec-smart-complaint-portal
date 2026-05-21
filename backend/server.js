@@ -11,8 +11,14 @@ const IS_VERCEL = process.env.VERCEL === "1";
 const dataFile = path.join(__dirname, "complaints.json");
 const frontendDir = path.join(__dirname, "..", "frontend");
 
-const KV_REST_API_URL = process.env.KV_REST_API_URL || "";
-const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN || "";
+const KV_REST_API_URL =
+  process.env.KV_REST_API_URL ||
+  process.env.STORAGE_REST_API_URL ||
+  "";
+const KV_REST_API_TOKEN =
+  process.env.KV_REST_API_TOKEN ||
+  process.env.STORAGE_REST_API_TOKEN ||
+  "";
 const KV_COMPLAINTS_KEY = "complaints";
 const kvEnabled = Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
 
@@ -148,7 +154,12 @@ app.delete("/api/complaints/:id", async (req, res) => {
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
-    storage: kvEnabled ? "vercel-kv" : IS_VERCEL ? "non-persistent" : "local-file"
+    storage: kvEnabled ? "vercel-kv" : IS_VERCEL ? "non-persistent" : "local-file",
+    envPrefix: process.env.KV_REST_API_URL
+      ? "KV"
+      : process.env.STORAGE_REST_API_URL
+        ? "STORAGE"
+        : "none"
   });
 });
 
