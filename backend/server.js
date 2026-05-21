@@ -177,7 +177,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(frontendDir, "index.html"));
+  res.send("Backend Running");
 });
 
 app.listen(PORT, () => {
